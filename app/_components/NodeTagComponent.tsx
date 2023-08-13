@@ -1,30 +1,39 @@
 "use client";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { LeafTag, NodeTag } from "../types";
-import { LeafTagComponent } from "../page";
+import { TagRenderer } from "./TagRenderer";
+import { LeafTagComponent } from "./LeafTagComponent";
 
-export function NodeTagComponent({ tag }: { tag: NodeTag }) {
-	return (
-		<details className="relative w-40 ">
-			<summary className="">{tag.name}</summary>
-			{tag.children.map((c) => {
-				if (Object.hasOwn(c, "data")) {
-					return <LeafTagComponent tag={c as LeafTag} />;
-				}
+export function NodeTagComponent({
+  tag,
+  root,
+  setRoot,
+}: {
+  tag: NodeTag;
+  root: NodeTag;
+  setRoot: Dispatch<SetStateAction<NodeTag>>;
+}) {
+  return (
+    <TagRenderer {...{ tag, root, setRoot }}>
+      {tag.children.map((c) => {
+        if (Object.hasOwn(c, "children")) {
+          return (
+            <NodeTagComponent
+              tag={c as NodeTag}
+              {...{ root, setRoot }}
+              key={tag.name}
+            />
+          );
+        }
 
-				return <NodeTagComponent tag={c as NodeTag} />;
-			})}
-			<button
-				className="absolute top-0 right-0"
-				onClick={() => {
-					tag.children.push({
-						name: "New Child",
-						data: "Data",
-					} as LeafTag);
-				}}
-			>
-				Add
-			</button>
-		</details>
-	);
+        return (
+          <LeafTagComponent
+            key={tag.name}
+            tag={c as LeafTag}
+            {...{ root, setRoot }}
+          />
+        );
+      })}
+    </TagRenderer>
+  );
 }
