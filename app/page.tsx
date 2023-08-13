@@ -4,7 +4,7 @@ import { NodeTag } from "./types";
 import { NodeTagComponent } from "./_components/NodeTagComponent";
 import { Button } from "./_components/Button";
 
-export const rootTag: NodeTag = {
+const rootTag: NodeTag = {
   name: "root",
   children: [
     {
